@@ -1,5 +1,26 @@
-import { NewPlugin } from 'pretty-format'
-import { css } from 'styled-components'
+import { Plugin } from '@vitest/pretty-format';
+import { css } from 'styled-components';
+
+export interface Options {
+  media?: string;
+  modifier?: string | ReturnType<typeof css>;
+  supports?: string;
+}
+export declare function toHaveStyleRule(
+  property: string,
+  value?: string | RegExp | object | any[] | Function,
+  options?: Options
+): { pass: boolean; message: ()=> string };
+
+export declare function resetStyleSheet(): void;
+export interface StyledComponentsSerializerOptions {
+  addStyles?: boolean,
+  classNameFormatter?: (index: number) => string
+}
+
+export declare const styleSheetSerializer: Plugin & {
+  setStyleSheetSerializerOptions: (options?: StyledComponentsSerializerOptions) => void
+};
 
 declare global {
   namespace jest {
@@ -21,12 +42,3 @@ declare global {
     }
   }
 }
-
-export interface StyledComponentsSerializerOptions { 
-  addStyles?: boolean, 
-  classNameFormatter?: (index: number) => string 
-} 
-
-export declare const styleSheetSerializer: NewPlugin & {
-  setStyleSheetSerializerOptions: (options?: StyledComponentsSerializerOptions) => void 
-};

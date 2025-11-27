@@ -1,4 +1,4 @@
-const { getCSS, matcherTest, buildReturnMessage } = require('./utils');
+import { getCSS, matcherTest, buildReturnMessage } from './utils';
 
 const shouldDive = (node) => typeof node.dive === 'function' && typeof node.type() !== 'string';
 
@@ -136,4 +136,4 @@ function toHaveStyleRule(component, property, expected, options = {}) {
   };
 }
 
-module.exports = toHaveStyleRule;
+export default toHaveStyleRule;

@@ -1,5 +1,5 @@
-const css = require('@adobe/css-tools');
-const { ServerStyleSheet, __PRIVATE__ } = require('styled-components');
+import css from '@adobe/css-tools';
+import { ServerStyleSheet, __PRIVATE__ } from 'styled-components';
 
 if (!__PRIVATE__) {
   throw new Error('Could neither find styled-components secret internals');
@@ -78,7 +78,7 @@ const matcherTest = (received, expected, isNot) => {
   }
 };
 
-module.exports = {
+export {
   resetStyleSheet,
   getCSS,
   getHashes,

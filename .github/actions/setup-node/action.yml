@@ -1,0 +1,29 @@
+name: 'Setup Node'
+description: 'Setup NodeJS and Yarn on the runner for the current workflow run.'
+
+inputs:
+  node-version-file:
+    description: 'File containing the version Spec of the version to use. Examples: package.json, .node-version...'
+    default: 'package.json'
+
+  github_token:
+    description: 'GitHub token for fetching node from GitHub first instead of nodejs.org. Example: $ {{ secrets.GITHUB_TOKEN }}.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ${{ inputs.node-version-file }}
+        token: ${{ inputs.github_token }} # to avoid rate limit issues
+
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup yarn config for gem fury registry
+      shell: bash
+      run: |
+        yarn config set nodeLinker node-modules

@@ -1,31 +1,45 @@
 {
-  "name": "jest-styled-components",
-  "version": "7.2.0",
-  "description": "Jest utilities for Styled Components",
-  "main": "./src/index.js",
+  "name": "@mirakl/vitest-styled-components",
+  "version": "1.0.3",
+  "description": "Vitest utilities for Styled Components",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "typings": "./typings/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./typings/index.d.ts"
+    },
+    "./serializer": {
+      "import": "./dist/esm/serializer/index.js",
+      "require": "./dist/cjs/serializer/index.js"
+    }
+  },
   "files": [
-    "native",
+    "dist",
     "serializer",
-    "src",
     "typings"
   ],
-  "repository": "github:styled-components/jest-styled-components",
+  "repository": "github:mirakl/vitest-styled-components",
   "bugs": {
-    "url": "https://github.com/styled-components/jest-styled-components/issues"
+    "url": "https://github.com/mirakl/vitest-styled-components/issues"
   },
-  "author": "Michele Bertoli",
+  "author": "FED Team",
   "license": "MIT",
   "scripts": {
-    "test": "yarn test:web && yarn test:native && yarn test:preact",
-    "test:web": "jest --color",
-    "test:web:watch": "jest --watch",
-    "test:native": "jest --color --config .jest.native.json",
-    "test:preact": "jest --color --config .jest.preact.json"
+    "build": "yarn build:cjs && yarn build:esm",
+    "build:cjs": "babel src --out-dir dist/cjs --config-file ./babel.config.cjs.json --no-babelrc",
+    "build:esm": "babel src --out-dir dist/esm --config-file ./babel.config.esm.json --no-babelrc",
+    "prebuild": "rm -rf dist",
+    "prepare": "yarn build",
+    "verify-build": "node verify-build.js"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.0",
     "@babel/core": "^7.0.0",
     "@babel/eslint-parser": "^7.16.3",
+    "@babel/plugin-transform-runtime": "^7.23.0",
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-react": "^7.0.0",
     "@testing-library/react": "^12.1.2",
@@ -33,28 +47,23 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.5",
     "babel-jest": "^27.3.1",
     "babel-plugin-styled-components": "^2.0.1",
-    "enzyme": "^3.6.0",
-    "enzyme-adapter-preact-pure": "^3.3.0",
-    "enzyme-to-json": "^3.3.1",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky-v4": "^4.3.8",
     "jest": "^27.3.1",
     "lint-staged": "^12.1.1",
-    "preact": "^10.0.0-beta.2",
-    "preact-render-to-json": "^3.6.6",
     "prettier": "^2.3.2",
     "pretty-format": "^27.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
-    "react-native": "^0.66.3",
     "react-test-renderer": "^17.0.2",
     "styled-components": "^6.0.9"
   },
   "dependencies": {
-    "@adobe/css-tools": "^4.0.1"
+    "@adobe/css-tools": "^4.0.1",
+    "@babel/runtime": "^7.23.0"
   },
   "peerDependencies": {
     "styled-components": ">= 5"
@@ -85,7 +94,8 @@
       "<rootDir>/test/preact"
     ]
   },
-  "engines": {
-    "node": ">= 12"
+  "volta": {
+    "node": "22.14.0",
+    "yarn": "4.10.3"
   }
 }

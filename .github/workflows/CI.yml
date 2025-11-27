@@ -1,0 +1,60 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - "**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - unlabeled
+  push:
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    name: test
+    runs-on: mirakl-hosted
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+        with:
+          npm_token: ${{ secrets.NPM_AUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure lockfile is optimized
+        run: yarn dedupe --check
+
+      - name: Caching node modules
+        uses: ./.github/actions/cache
+        id: yarn-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-node-modules-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-cache
+
+      - name: Yarn install
+        run: yarn install --immutable
+
+      - name: Build
+        run: yarn build
+
+      - name: Verify build
+        run: yarn verify-build
+

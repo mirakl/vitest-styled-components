@@ -1,5 +1,5 @@
-const css = require('@adobe/css-tools');
-const { getCSS, getHashes } = require('./utils');
+import css from '@adobe/css-tools';
+import { getCSS, getHashes } from './utils';
 
 let cache = new WeakSet();
 const getNodes = (node, nodes = []) => {
@@ -116,48 +116,52 @@ const serializerOptionDefaults = {
 };
 let serializerOptions = serializerOptionDefaults;
 
-module.exports = {
-  /**
-   * Configure jest-styled-components/serializer
-   *
-   * @param {{ addStyles?: boolean, classNameFormatter?: (index: number) => string }} options
-   */
-  setStyleSheetSerializerOptions(options = {}) {
-    serializerOptions = {
-      ...serializerOptionDefaults,
-      ...options,
-    };
-  },
+/**
+ * Configure vitest-styled-components/serializer
+ *
+ * @param {{ addStyles?: boolean, classNameFormatter?: (index: number) => string }} options
+ */
+export function setStyleSheetSerializerOptions(options = {}) {
+  serializerOptions = {
+    ...serializerOptionDefaults,
+    ...options,
+  };
+}
 
-  test(val) {
-    return (
-      val &&
-      !cache.has(val) &&
-      (val.$$typeof === Symbol.for('react.test.json') || (global.Element && val instanceof global.Element))
-    );
-  },
+export function test(val) {
+  return (
+    val &&
+    !cache.has(val) &&
+    (val.$$typeof === Symbol.for('react.test.json') || (global.Element && val instanceof global.Element))
+  );
+}
 
-  serialize(val, config, indentation, depth, refs, printer) {
-    const nodes = getNodes(val);
-    nodes.forEach(cache.add, cache);
+export function serialize(val, config, indentation, depth, refs, printer) {
+  const nodes = getNodes(val);
+  nodes.forEach(cache.add, cache);
 
-    const hashes = getHashes();
+  const hashes = getHashes();
 
-    let classNames = [...getClassNames(nodes)];
-    let unreferencedClassNames = classNames;
+  let classNames = [...getClassNames(nodes)];
+  let unreferencedClassNames = classNames;
 
-    classNames = filterClassNames(classNames, hashes);
-    unreferencedClassNames = filterUnreferencedClassNames(unreferencedClassNames, hashes);
+  classNames = filterClassNames(classNames, hashes);
+  unreferencedClassNames = filterUnreferencedClassNames(unreferencedClassNames, hashes);
 
-    const style = getStyle(classNames, config);
-    const classNamesToReplace = getClassNamesFromSelectorsByHashes(classNames, hashes);
-    const code = printer(val, config, indentation, depth, refs);
+  const style = getStyle(classNames, config);
+  const classNamesToReplace = getClassNamesFromSelectorsByHashes(classNames, hashes);
+  const code = printer(val, config, indentation, depth, refs);
 
-    let result = serializerOptions.addStyles ? `${style}${style ? '\n\n' : ''}${code}` : code;
-    result = stripUnreferencedClassNames(result, unreferencedClassNames);
-    result = replaceClassNames(result, classNamesToReplace, style, serializerOptions.classNameFormatter);
-    result = replaceHashes(result, hashes);
-    nodes.forEach(cache.delete, cache);
-    return result;
-  },
+  let result = serializerOptions.addStyles ? `${style}${style ? '\n\n' : ''}${code}` : code;
+  result = stripUnreferencedClassNames(result, unreferencedClassNames);
+  result = replaceClassNames(result, classNamesToReplace, style, serializerOptions.classNameFormatter);
+  result = replaceHashes(result, hashes);
+  nodes.forEach(cache.delete, cache);
+  return result;
+}
+
+export default {
+  setStyleSheetSerializerOptions,
+  test,
+  serialize,
 };

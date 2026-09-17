@@ -1,4 +1,3 @@
-import { Plugin } from '@vitest/pretty-format';
 import { css } from 'styled-components';
 
 export interface Options {
@@ -18,7 +17,16 @@ export interface StyledComponentsSerializerOptions {
   classNameFormatter?: (index: number) => string
 }
 
-export declare const styleSheetSerializer: Plugin & {
+export declare const styleSheetSerializer: {
+  test: (val: any) => boolean;
+  serialize: (
+    val: any,
+    config: any,
+    indentation: string,
+    depth: number,
+    refs: any,
+    printer: (val: any, config: any, indentation: string, depth: number, refs: any) => string
+  ) => string;
   setStyleSheetSerializerOptions: (options?: StyledComponentsSerializerOptions) => void
 };
 

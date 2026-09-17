@@ -1,6 +1,6 @@
 {
   "name": "@mirakl/vitest-styled-components",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Vitest utilities for Styled Components",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
